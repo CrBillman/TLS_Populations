@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Population:
-        def __init__(self, Tau = None, population = None, temp = None, E = None, Tau2 = None):
+        def __init__(self, Tau = None, population = None, temp = None, E = None, Tau2 = None, Efield = None):
                 if Tau:
                         self.Tau1 = Tau
                 else:
@@ -15,7 +15,7 @@ class Population:
                 if population:
                         self.population = population
                 else:
-                        population= 0.0
+                        self.population= 0.0
                 if temp:
                         self.temp = temp
                 else:
@@ -24,8 +24,14 @@ class Population:
                         self.E = E
                 else:
                         self.E = 0.0
+		if Efield:
+			self.field = Efield
+		else:
+			self.field = 0.0
+		self.dipole = 1.0
+		self.alpha = 0.0
+		self.UpdatePolarizability()
 		self.UpdateEquilibrium()
-                self.field = 0.0
                 return
 
         def ApplyField(self, E):
@@ -34,22 +40,23 @@ class Population:
 
         def UpdateEquilibrium(self):
 		try:
-			self.equilibrium = np.tanh( self.E / ( 2 * self.temp ))
+			self.equilibrium = self.alpha * self.field + self.dipole * np.tanh( self.E / ( 2 * self.temp ))
 		except ZeroDivisionError:
-			self.equilibrium = -1.0
+			self.equilibrium = self.alpha * self.field - self.dipole
 		print("New equilibrium value is " + str(self.equilibrium))
 		return
 
         def TakeStep(self, deltaT = 0.1):
 		diff = self.population - self.equilibrium
 		if diff >= 0.0:
-			partial = - self.GetPolarizability() * self.field - diff / self.Tau1
+			partial = self.alpha * self.field - diff / self.Tau1
 		else:
-			partial = - self.GetPolarizability() * self.field - diff / self.Tau2
+			partial = self.alpha * self.field - diff / self.Tau2
                 self.population = self.population + partial * deltaT
 
-        def GetPolarizability(self):
-                return 0.0
+        def UpdatePolarizability(self):
+		self.alpha = self.dipole ** 2 / (3 * self.temp) * np.cosh( self.E / (2 * self.temp)) ** (-2.0)
+                return
 
         def GetPopulationDifference(self):
                 return self.population

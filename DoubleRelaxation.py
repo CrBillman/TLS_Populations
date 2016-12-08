@@ -9,7 +9,7 @@ plt.subplot(221)
 energies = [1e-2, 5e-2, 1e-1, 5e-1, 1e0, 5e0, 0.0, -1e-2, -5e-2, -1e-1, -5e-1, -1e0, -5e0,]
 relaxations = []
 for energy in energies:
-        relaxations.append(pop.Population(Tau = 10, Tau2 = 10, population = 1.0, E = energy, temp = temp))
+        relaxations.append(pop.Population(Tau = 10, Tau2 = 10, population = 1.0, E = energy, temp = temp, Efield = 0.0))
 steps = np.empty([nSteps, len(energies) + 1])
 
 for i in xrange(0, 100000):
@@ -35,7 +35,7 @@ plt.subplot(223)
 energies = [1e-2, 5e-2, 1e-1, 5e-1, 1e0, 5e0, 0.0, -1e-2, -5e-2, -1e-1, -5e-1, -1e0, -5e0,]
 relaxations = []
 for energy in energies:
-        relaxations.append(pop.Population(Tau = 10, Tau2 = 10, population = -1.0, E = energy, temp = temp))
+        relaxations.append(pop.Population(Tau = 10, Tau2 = 10, population = -1.0, E = energy, temp = temp, Efield = 0.0))
 steps = np.empty([nSteps, len(energies) + 1])
 
 for i in xrange(0, 100000):
